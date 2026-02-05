@@ -24,10 +24,10 @@ const fileToGenerativePart = async (file: File): Promise<{ inlineData: { data: s
 export const analyzeProduct = async (imageFiles: File[], userKeywords?: string): Promise<ProductAnalysis> => {
   // Create a fresh instance to use the latest selected API key
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-  
+
   // Convert all images to generative parts
   const imageParts = await Promise.all(imageFiles.map(fileToGenerativePart));
-  
+
   const prompt = `
     Analyze these product images to create high-quality Etsy listing metadata and creative assets.
     I have provided ${imageFiles.length} images of the product. Use all of them to understand details, angles, and features.
@@ -58,7 +58,7 @@ export const analyzeProduct = async (imageFiles: File[], userKeywords?: string):
     
     4. 'style': The aesthetic style of the product (e.g., "Boho Rustic", "Modern Minimalist").
     
-    5. 'suggestedScenes': Array of 5 creative photography settings/backgrounds suitable for this product's style (for mockup generation).
+    5. 'suggestedScenes': Array of 10 creative photography settings/backgrounds suitable for this product's style (for mockup generation).
     
     6. 'seoReasoning': Brief explanation of how you mixed the user keywords with your strategy.
 
@@ -81,7 +81,7 @@ export const analyzeProduct = async (imageFiles: File[], userKeywords?: string):
       if (part.text) text += part.text;
     }
   }
-  
+
   const jsonStr = text.replace(/```json|```/g, '').trim();
   try {
     return JSON.parse(jsonStr) as ProductAnalysis;
@@ -95,7 +95,7 @@ export const generateMockupImage = async (imageFile: File, scenePrompt: string, 
   // Fresh instance for every image generation
   const proAi = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const imagePart = await fileToGenerativePart(imageFile);
-  
+
   const response = await proAi.models.generateContent({
     model: 'gemini-3-pro-image-preview',
     contents: {
@@ -105,9 +105,9 @@ export const generateMockupImage = async (imageFile: File, scenePrompt: string, 
       ]
     },
     config: {
-      imageConfig: { 
-        imageSize: "4K", 
-        aspectRatio: aspectRatio 
+      imageConfig: {
+        imageSize: "4K",
+        aspectRatio: aspectRatio
       }
     }
   });
@@ -144,7 +144,7 @@ export const generateProductVideo = async (imageFile: File, description: string,
 
   while (!operation.done) {
     await new Promise(resolve => setTimeout(resolve, 5000));
-    operation = await videoAi.operations.getVideosOperation({operation: operation});
+    operation = await videoAi.operations.getVideosOperation({ operation: operation });
   }
 
   const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
@@ -152,7 +152,7 @@ export const generateProductVideo = async (imageFile: File, description: string,
 
   const videoResponse = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
   if (!videoResponse.ok) throw new Error("Failed to download video file");
-  
+
   const blob = await videoResponse.blob();
   return URL.createObjectURL(blob);
 };
