@@ -5,7 +5,7 @@ export interface UserInput {
   materials: string;
   targetAudience: string;
   userKeywords?: string;
-  image?: File | null;
+  images?: File[]; // Changed from single image to array
 }
 
 export enum AppStatus {

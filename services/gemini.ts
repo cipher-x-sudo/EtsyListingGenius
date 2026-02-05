@@ -1,8 +1,6 @@
+
 import { GoogleGenAI } from "@google/genai";
 import { ProductAnalysis } from "../types";
-
-// Note: Create a new instance for Veo requests to ensure fresh key if needed
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 // Helper to convert File to Base64
 const fileToGenerativePart = async (file: File): Promise<{ inlineData: { data: string; mimeType: string } }> => {
@@ -23,11 +21,16 @@ const fileToGenerativePart = async (file: File): Promise<{ inlineData: { data: s
   });
 };
 
-export const analyzeProduct = async (imageFile: File, userKeywords?: string): Promise<ProductAnalysis> => {
-  const imagePart = await fileToGenerativePart(imageFile);
+export const analyzeProduct = async (imageFiles: File[], userKeywords?: string): Promise<ProductAnalysis> => {
+  // Create a fresh instance to use the latest selected API key
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  
+  // Convert all images to generative parts
+  const imageParts = await Promise.all(imageFiles.map(fileToGenerativePart));
   
   const prompt = `
-    Analyze this product image to create high-quality Etsy listing metadata and creative assets.
+    Analyze these product images to create high-quality Etsy listing metadata and creative assets.
+    I have provided ${imageFiles.length} images of the product. Use all of them to understand details, angles, and features.
     
     User's Specific Keywords (MUST USE): ${userKeywords || "None provided"}
 
@@ -36,7 +39,6 @@ export const analyzeProduct = async (imageFile: File, userKeywords?: string): Pr
        - Rules: MAX 125 CHARACTERS.
        - CRITICAL: STRICTLY AVOID KEYWORD STUFFING. Do not repeat words.
        - Write a natural, human-readable sentence fragment. 
-       - Example: "Handmade Ceramic Coffee Mug with Blue Glaze, Modern Minimalist Tea Cup" (Good) vs "Blue Mug Coffee Mug Tea Cup Gift for Her" (Bad).
        - MUST include the User's Specific Keywords (if provided) naturally near the beginning.
     
     2. 'tags': Array of 13 strings.
@@ -64,10 +66,10 @@ export const analyzeProduct = async (imageFile: File, userKeywords?: string): Pr
   `;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash-image',
+    model: 'gemini-2.5-flash', // Using a reliable vision-capable model for analysis
     contents: {
       parts: [
-        imagePart,
+        ...imageParts,
         { text: prompt }
       ]
     }
@@ -90,12 +92,12 @@ export const analyzeProduct = async (imageFile: File, userKeywords?: string): Pr
 };
 
 export const generateMockupImage = async (imageFile: File, scenePrompt: string, aspectRatio: string = "1:1"): Promise<string> => {
-  // Use a fresh instance for Pro model (4K support)
+  // Fresh instance for every image generation
   const proAi = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const imagePart = await fileToGenerativePart(imageFile);
   
   const response = await proAi.models.generateContent({
-    model: 'gemini-3-pro-image-preview', // High-quality model by default
+    model: 'gemini-3-pro-image-preview',
     contents: {
       parts: [
         imagePart,
@@ -104,7 +106,7 @@ export const generateMockupImage = async (imageFile: File, scenePrompt: string, 
     },
     config: {
       imageConfig: { 
-        imageSize: "4K", // Force 4K
+        imageSize: "4K", 
         aspectRatio: aspectRatio 
       }
     }
