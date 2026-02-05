@@ -1,0 +1,5 @@
+{
+  "name": "EtsyListingGenius",
+  "description": "An AI-powered assistant for Etsy sellers. Generate SEO-optimized listings and create stunning product mockups using Google Gemini.",
+  "requestFramePermissions": []
+}
