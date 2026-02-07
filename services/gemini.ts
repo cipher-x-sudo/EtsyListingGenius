@@ -1,6 +1,6 @@
 
 import { GoogleGenAI } from "@google/genai";
-import { ProductAnalysis } from "../types";
+import { ProductAnalysis, ThumbnailConfig } from "../types";
 
 // Helper to convert File to Base64
 const fileToGenerativePart = async (file: File): Promise<{ inlineData: { data: string; mimeType: string } }> => {
@@ -155,4 +155,116 @@ export const generateProductVideo = async (imageFile: File, description: string,
 
   const blob = await videoResponse.blob();
   return URL.createObjectURL(blob);
+};
+
+export const generateThumbnail = async (
+  imageFiles: File[],
+  config: ThumbnailConfig
+): Promise<string> => {
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const imageParts = await Promise.all(imageFiles.map(fileToGenerativePart));
+
+  const layoutInstructions: Record<string, string> = {
+    spread: `Arrange the product designs in a bold, modern flat-lay layout, with multiple items slightly overlapping and rotated at different natural angles (5-15°), similar to a high-end stationery brand photoshoot. Show ${Math.min(imageFiles.length, 12)} product variants visible to visually communicate a multi-item bundle.`,
+    grid: `Arrange the product designs in a crisp, professional grid layout (3-4 columns) with consistent spacing. Each item should be clearly visible and slightly elevated with perspective. Style it like a product catalog showcase.`,
+    collage: `Create a creative, editorial-style collage with the product designs at various sizes and dynamic angles, some overlapping artistically. The hero product should be 40% larger than supporting items. Create depth with layering.`,
+    fan: `Fan out the products in an elegant semi-circular arc arrangement, overlapping like playing cards held in hand. The center product should be most prominent and slightly raised. Create a cascading depth effect.`,
+  };
+
+  const bgInstructions: Record<string, string> = {
+    'pink-gradient': `Use a soft pink-to-lighter-pink gradient background, pastel and feminine aesthetic. Complement with subtle rose gold geometric accent lines.`,
+    'pastel-floral': `Use a soft pastel watercolor background with subtle, tasteful botanical elements at the edges. Keep the center clean for the product showcase.`,
+    'warm-earth': `Use warm earthy tones — terracotta, cream, tan gradient — with a cozy, artisanal aesthetic. Add subtle linen texture.`,
+    'holiday': `Use a festive, seasonal background that matches the product theme. Add tasteful, subtle seasonal decorations at the edges only — don't compete with the products.`,
+    'modern-minimal': `Use a clean white or very light pastel background to make the product designs and typography stand out clearly. Ultra-minimal, no distracting elements.`,
+    'dark-luxury': `Use a deep charcoal or matte black background with subtle gold foil accent elements. Premium luxury aesthetic with rich contrast.`,
+  };
+
+  const layout = layoutInstructions[config.layoutStyle] || layoutInstructions['spread'];
+  const bg = bgInstructions[config.backgroundStyle] || bgInstructions['modern-minimal'];
+
+  const productContext = config.productTitle
+    ? `using the uploaded ${config.productTitle} designs`
+    : `using the uploaded product designs`;
+
+  const styleContext = config.productStyle || 'modern, professional digital product';
+
+  let prompt = `Create a premium, eye-catching Etsy listing thumbnail mockup in a perfect 1:1 square format (1080×1080 px, must be exactly square) ${productContext}.
+
+LAYOUT & COMPOSITION:
+${layout}
+
+BACKGROUND:
+${bg}
+
+Add soft, realistic drop shadows beneath each product card/item to give a tangible, printed paper feel with realistic depth.
+
+Keep the composition clean, typography-focused, and uncluttered — no heavy props or excessive decoration. The products themselves are the hero.
+`;
+
+  // Build text overlay section
+  const textOverlays: string[] = [];
+
+  if (config.headlineText) {
+    textOverlays.push(`• Clear, prominent overlay text reading: "${config.headlineText}" — place this in a bold, modern sans-serif font. Position it prominently on the image where it's immediately readable. Use high contrast against the background.`);
+  }
+
+  if (config.badgeText) {
+    textOverlays.push(`• Add a circular or rounded badge element that reads: "${config.badgeText}" — make the key number/count LARGE and prominent inside the badge. Style the badge with a subtle shadow and a complementary accent color.`);
+  }
+
+  if (config.sizeText) {
+    textOverlays.push(`• Add informational text: "${config.sizeText}" — place at the bottom area of the image in a clean, readable font. Slightly smaller than the headline but still clearly legible.`);
+  }
+
+  if (textOverlays.length > 0) {
+    prompt += `\nTEXT OVERLAYS (render these as clean, sharp, readable text directly on the image):\n${textOverlays.join('\n')}\n`;
+  }
+
+  prompt += `
+STYLE & MOOD:
+- ${styleContext} aesthetic
+- High-end digital product listing look for Etsy marketplace
+- Text must be crisp, clean, and perfectly readable at thumbnail size
+- All text should use modern sans-serif typography (like Montserrat, Poppins style)
+- Strong visual hierarchy: products first, then badges, then supporting text
+
+TECHNICAL REQUIREMENTS:
+- Bright, even studio lighting with strong contrast for thumbnail visibility
+- Ultra-high resolution, pixel-sharp focus
+- Clean composition with intentional whitespace
+- No watermarks, no stock photo artifacts
+- Professional color grading that enhances the product colors
+- Add a small, subtle CANVA logo in the top corner (clean, professional placement)
+- The final result should look like it was created by a professional Etsy seller with top-tier branding
+`;
+
+  if (config.customInstructions) {
+    prompt += `\nADDITIONAL CREATIVE DIRECTION:\n${config.customInstructions}\n`;
+  }
+
+  const response = await ai.models.generateContent({
+    model: 'gemini-3-pro-image-preview',
+    contents: {
+      parts: [
+        ...imageParts,
+        { text: prompt }
+      ]
+    },
+    config: {
+      responseModalities: ['image', 'text'],
+      imageConfig: {
+        imageSize: "4K",
+      }
+    }
+  });
+
+  if (response.candidates?.[0]?.content?.parts) {
+    for (const part of response.candidates[0].content.parts) {
+      if (part.inlineData) {
+        return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+      }
+    }
+  }
+  throw new Error("Failed to generate thumbnail image");
 };

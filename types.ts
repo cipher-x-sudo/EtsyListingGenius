@@ -17,7 +17,7 @@ export enum AppStatus {
 
 export interface GeneratedAsset {
   id: string;
-  type: 'image' | 'video';
+  type: 'image' | 'video' | 'thumbnail';
   url: string;
   prompt: string;
   status: 'pending' | 'generating' | 'completed' | 'error';
@@ -37,4 +37,16 @@ export interface EtsyListingResponse extends ProductAnalysis {
   categoryPath?: string;
   priceSuggestion?: string;
   attributes?: Record<string, string>;
+}
+
+export interface ThumbnailConfig {
+  headlineText: string;
+  badgeText: string;
+  sizeText: string;
+  backgroundStyle: string;
+  layoutStyle: string;
+  customInstructions: string;
+  productTitle?: string;
+  productDescription?: string;
+  productStyle?: string;
 }
