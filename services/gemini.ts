@@ -62,11 +62,16 @@ export const analyzeProduct = async (imageFiles: File[], userKeywords?: string):
     
     6. 'seoReasoning': Brief explanation of how you mixed the user keywords with your strategy.
 
+    7. 'thumbnailHeadline': The MAIN KEYWORD or OCCASION for the product (max 3-5 words). MUST be descriptive of what it is. 
+       - Examples: "Valentine's Day Cards", "Christmas Wall Art", "Wedding Invitation", "Employee Appreciation".
+
+    8. 'thumbnailBadge': A short badge text highlighting a key feature or count (e.g., "25 Pages", "Best Seller").
+
     Return ONLY the JSON.
   `;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash', // Using a reliable vision-capable model for analysis
+    model: 'gemini-2.0-flash', // Using a reliable vision-capable model for analysis
     contents: {
       parts: [
         ...imageParts,
@@ -105,6 +110,7 @@ export const generateMockupImage = async (imageFile: File, scenePrompt: string, 
       ]
     },
     config: {
+      responseModalities: ['image', 'text'],
       imageConfig: {
         imageSize: "4K",
         aspectRatio: aspectRatio
@@ -205,7 +211,10 @@ Keep the composition clean, typography-focused, and uncluttered — no heavy pro
   // Build text overlay section
   const textOverlays: string[] = [];
 
-  if (config.headlineText) {
+  // MANDATORY: Always include "Fully Editable with Canva"
+  textOverlays.push(`• MANDATORY OVERLAY: "Fully Editable with Canva" — Place this prominently (e.g. top or bottom center) in a clean, legible badge or text overlay. Make sure the Canva logo is near it or implied.`);
+
+  if (config.headlineText && config.headlineText.toLowerCase() !== 'fully editable with canva') {
     textOverlays.push(`• Clear, prominent overlay text reading: "${config.headlineText}" — place this in a bold, modern sans-serif font. Position it prominently on the image where it's immediately readable. Use high contrast against the background.`);
   }
 

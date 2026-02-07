@@ -33,7 +33,7 @@ const MockupGenerator: React.FC = () => {
   const [aspectRatio, setAspectRatio] = useState<'1:1' | '16:9' | '9:16'>('1:1');
 
   // Thumbnail Config
-  const [thumbHeadline, setThumbHeadline] = useState('Fully Editable with Canva');
+  const [thumbHeadline, setThumbHeadline] = useState('');
   const [thumbBadge, setThumbBadge] = useState('');
   const [thumbSize, setThumbSize] = useState('');
   const [thumbBgStyle, setThumbBgStyle] = useState('pink-gradient');
@@ -84,6 +84,8 @@ const MockupGenerator: React.FC = () => {
       const result = await analyzeProduct(files, keywords);
       setAnalysis(result);
       setScenarios(result.suggestedScenes);
+      if (result.thumbnailHeadline) setThumbHeadline(result.thumbnailHeadline);
+      if (result.thumbnailBadge) setThumbBadge(result.thumbnailBadge);
     } catch (err: any) {
       console.error("Analysis failed", err);
       if (err?.message?.includes('403') || err?.message?.includes('permission') || err?.message?.includes('not found')) {

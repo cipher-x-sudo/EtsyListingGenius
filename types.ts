@@ -31,6 +31,8 @@ export interface ProductAnalysis {
   style: string;
   suggestedScenes: string[];
   seoReasoning?: string;
+  thumbnailHeadline?: string;
+  thumbnailBadge?: string;
 }
 
 export interface EtsyListingResponse extends ProductAnalysis {
