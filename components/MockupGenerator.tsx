@@ -478,13 +478,42 @@ const MockupGenerator: React.FC = () => {
                 </div>
                 <div className="bg-white border border-slate-200 rounded-lg p-3 space-y-3 shadow-sm text-xs">
                   <div>
-                    <span className="text-[10px] text-slate-400 font-bold block mb-1">SEO TITLE</span>
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-[10px] text-slate-400 font-bold block">SEO TITLE</span>
+                      <button onClick={() => copyToClipboard(analysis.title)} className="text-slate-400 hover:text-indigo-600"><CopyIcon className="w-3 h-3" /></button>
+                    </div>
                     <p className="text-slate-800 font-medium leading-snug">{analysis.title}</p>
                   </div>
-                  <div className="flex flex-wrap gap-1">
-                    {analysis.tags.slice(0, 10).map((tag, i) => (
-                      <span key={i} className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded border border-slate-200">{tag}</span>
-                    ))}
+
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-[10px] text-slate-400 font-bold block">TAGS</span>
+                      <button
+                        onClick={() => copyToClipboard(analysis.tags.join(','))}
+                        className="flex items-center gap-1 text-[10px] text-indigo-600 hover:underline"
+                        title="Copy as tag1,tag2,tag3"
+                      >
+                        <CopyIcon className="w-3 h-3" /> Copy All
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {analysis.tags.slice(0, 10).map((tag, i) => (
+                        <span key={i} className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded border border-slate-200">{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-[10px] text-slate-400 font-bold block">DESCRIPTION</span>
+                      <button onClick={() => copyToClipboard(analysis.description)} className="text-slate-400 hover:text-indigo-600"><CopyIcon className="w-3 h-3" /></button>
+                    </div>
+                    <textarea
+                      value={analysis.description}
+                      onChange={(e) => setAnalysis({ ...analysis, description: e.target.value })}
+                      rows={6}
+                      className="w-full text-xs p-2 rounded border border-slate-200 outline-none resize-y focus:ring-1 focus:ring-indigo-500 bg-slate-50 whitespace-pre-wrap"
+                    />
                   </div>
                 </div>
               </div>

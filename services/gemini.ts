@@ -48,10 +48,9 @@ export const analyzeProduct = async (imageFiles: File[], userKeywords?: string):
     
     3. 'description': A compelling, professional listing description.
        - FORMATTING RULES (Strict):
-         * NO WALLS OF TEXT. Use short paragraphs (max 2-3 sentences).
-         * Use BULLET POINTS for features, dimensions, and materials.
-         * Proper punctuation and capitalization (NO ALL CAPS).
-         * Avoid excessive emojis.
+         * Use short paragraphs or bullets, proper punctuation, and include essentials (materials, size, usage).
+         * Avoid walls of text, excessive ALL CAPS/emoji, and keyword stuffing.
+         * Clear structure helps shoppers decide faster.
        - CONTENT:
          * Include separate small headers/sections like "About this Item", "Materials", "Dimensions/Size", and "Care Instructions".
          * Weave keywords naturally into sentences, do not list them.
