@@ -44,11 +44,14 @@ export const analyzeProduct = async (imageFiles: File[], userKeywords?: string, 
     
     2. 'tags': Array of 13 strings.
        - Rules: Mix User's Specific Keywords with high-traffic AI suggestions.
-       - Max 20 chars per tag. 
+       - Max 18 chars per tag. 
        - Varied vocabulary (no repetition of root words).
     
     3. 'description': A compelling, professional listing description.
-       - SEO REQUIREMENT (CRITICAL): The "SUPERSTAR KEYWORD" provided above is the ABSOLUTE PRIORITY. It MUST appear naturally but prominently in the first 160 characters (first sentence) of the description.
+       - SEO REQUIREMENT (CRITICAL): The "SUPERSTAR KEYWORD" provided above is the ABSOLUTE PRIORITY.
+         * RULE: It MUST appear naturally in the FIRST 160 CHARACTERS.
+         * WHY: This section is the meta description in search results. It shows relevance.
+         * EXECUTION: Start the "About this Item" section with a sentence containing the superstar keyword. Keep it clear, natural, and focused.
        - STRUCTURE & FORMATTING (Strict):
          * BREAK TEXT UP: Use short paragraphs (2-3 sentences max) and bullet points.
          * HEADERS: You MUST use the following headers to organize content:
@@ -64,8 +67,10 @@ export const analyzeProduct = async (imageFiles: File[], userKeywords?: string, 
            ### Care Instructions
            (Practical care tips)
        - CONTENT RULES:
-         * Avoid "walls of text". Make it skimmable.
-         * Be factual and descriptive based on the visual evidence.
+         * QUALITY CHECK: Proofread for 0 typos or grammatical errors.
+         * LENGTH: Target 160-300 chracters. Ensure it is detailed enough to answer buyer questions about materials, size, and usage.
+         * UNIQUENESS: Do NOT just repeat the title. Write unique, engaging copy.
+         * KEYWORD INTEGRATION: You MUST naturally use ALL "User's Specific Keywords" within the sentences of the description. Do not just list them.
          * Tone: Warm, professional, and persuasive.
     
     4. 'style': The aesthetic style of the product (e.g., "Boho Rustic", "Modern Minimalist").
