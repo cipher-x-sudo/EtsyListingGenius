@@ -71,7 +71,7 @@ export const analyzeProduct = async (imageFiles: File[], userKeywords?: string):
   `;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-2.0-flash', // Using a reliable vision-capable model for analysis
+    model: 'gemini-2.5-flash', // Using a reliable vision-capable model for analysis
     contents: {
       parts: [
         ...imageParts,
@@ -212,7 +212,8 @@ Keep the composition clean, typography-focused, and uncluttered — no heavy pro
   const textOverlays: string[] = [];
 
   // MANDATORY: Always include "Fully Editable with Canva"
-  textOverlays.push(`• MANDATORY OVERLAY: "Fully Editable with Canva" — Place this prominently (e.g. top or bottom center) in a clean, legible badge or text overlay. Make sure the Canva logo is near it or implied.`);
+  textOverlays.push(`• MANDATORY OVERLAY: "Fully Editable with Canva" — Place this prominently (e.g. top or bottom center) in a clean, legible badge or text overlay.`);
+  //  Make sure the Canva logo is near it or implied.
 
   if (config.headlineText && config.headlineText.toLowerCase() !== 'fully editable with canva') {
     textOverlays.push(`• Clear, prominent overlay text reading: "${config.headlineText}" — place this in a bold, modern sans-serif font. Position it prominently on the image where it's immediately readable. Use high contrast against the background.`);
