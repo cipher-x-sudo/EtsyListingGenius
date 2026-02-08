@@ -47,13 +47,25 @@ export const analyzeProduct = async (imageFiles: File[], userKeywords?: string):
        - Varied vocabulary (no repetition of root words).
     
     3. 'description': A compelling, professional listing description.
-       - FORMATTING RULES (Strict):
-         * Use short paragraphs or bullets, proper punctuation, and include essentials (materials, size, usage).
-         * Avoid walls of text, excessive ALL CAPS/emoji, and keyword stuffing.
-         * Clear structure helps shoppers decide faster.
-       - CONTENT:
-         * Include separate small headers/sections like "About this Item", "Materials", "Dimensions/Size", and "Care Instructions".
-         * Weave keywords naturally into sentences, do not list them.
+       - SEO REQUIREMENT (CRITICAL): The FIRST keyword provided in "User's Specific Keywords" is the SUPERSTAR KEYWORD. It MUST appear naturally but prominently in the first 160 characters (first sentence) of the description.
+       - STRUCTURE & FORMATTING (Strict):
+         * BREAK TEXT UP: Use short paragraphs (2-3 sentences max) and bullet points.
+         * HEADERS: You MUST use the following headers to organize content:
+           ### About this Item
+           (Compelling hook, specific features, benefits. KEYWORD HERE.)
+           
+           ### Materials
+           (Specific materials, finish, texture)
+           
+           ### Dimensions/Size
+           (Exact measurements if visible, or standard sizing context. e.g. "5x7 inches")
+           
+           ### Care Instructions
+           (Practical care tips)
+       - CONTENT RULES:
+         * Avoid "walls of text". Make it skimmable.
+         * Be factual and descriptive based on the visual evidence.
+         * Tone: Warm, professional, and persuasive.
     
     4. 'style': The aesthetic style of the product (e.g., "Boho Rustic", "Modern Minimalist").
     
