@@ -4,6 +4,7 @@ export interface UserInput {
   productDescription: string;
   materials: string;
   targetAudience: string;
+  superstarKeyword?: string;
   userKeywords?: string;
   images?: File[]; // Changed from single image to array
 }

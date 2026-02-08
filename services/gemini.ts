@@ -21,7 +21,7 @@ const fileToGenerativePart = async (file: File): Promise<{ inlineData: { data: s
   });
 };
 
-export const analyzeProduct = async (imageFiles: File[], userKeywords?: string): Promise<ProductAnalysis> => {
+export const analyzeProduct = async (imageFiles: File[], userKeywords?: string, superstarKeyword?: string): Promise<ProductAnalysis> => {
   // Create a fresh instance to use the latest selected API key
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -32,14 +32,15 @@ export const analyzeProduct = async (imageFiles: File[], userKeywords?: string):
     Analyze these product images to create high-quality Etsy listing metadata and creative assets.
     I have provided ${imageFiles.length} images of the product. Use all of them to understand details, angles, and features.
     
-    User's Specific Keywords (MUST USE): ${userKeywords || "None provided"}
+    SUPERSTAR KEYWORD (Primary Focus): ${superstarKeyword || "None provided"}
+    User's Specific Keywords: ${userKeywords || "None provided"}
 
     You must return a valid JSON object with the following keys:
     1. 'title': An optimized Etsy title.
        - Rules: MAX 125 CHARACTERS.
        - CRITICAL: STRICTLY AVOID KEYWORD STUFFING. Do not repeat words.
        - Write a natural, human-readable sentence fragment. 
-       - MUST include the User's Specific Keywords (if provided) naturally near the beginning.
+       - MUST include the "SUPERSTAR KEYWORD" (if provided) naturally near the beginning.
     
     2. 'tags': Array of 13 strings.
        - Rules: Mix User's Specific Keywords with high-traffic AI suggestions.
@@ -47,7 +48,7 @@ export const analyzeProduct = async (imageFiles: File[], userKeywords?: string):
        - Varied vocabulary (no repetition of root words).
     
     3. 'description': A compelling, professional listing description.
-       - SEO REQUIREMENT (CRITICAL): The FIRST keyword provided in "User's Specific Keywords" is the SUPERSTAR KEYWORD. It MUST appear naturally but prominently in the first 160 characters (first sentence) of the description.
+       - SEO REQUIREMENT (CRITICAL): The "SUPERSTAR KEYWORD" provided above is the ABSOLUTE PRIORITY. It MUST appear naturally but prominently in the first 160 characters (first sentence) of the description.
        - STRUCTURE & FORMATTING (Strict):
          * BREAK TEXT UP: Use short paragraphs (2-3 sentences max) and bullet points.
          * HEADERS: You MUST use the following headers to organize content:

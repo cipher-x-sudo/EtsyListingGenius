@@ -20,6 +20,7 @@ const MockupGenerator: React.FC = () => {
   const [images, setImages] = useState<File[]>([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
   const [userKeywords, setUserKeywords] = useState("");
+  const [superstarKeyword, setSuperstarKeyword] = useState("");
   const [analysis, setAnalysis] = useState<ProductAnalysis | null>(null);
   const [assets, setAssets] = useState<GeneratedAsset[]>([]);
 
@@ -74,14 +75,14 @@ const MockupGenerator: React.FC = () => {
       setScenarios([]);
 
       // Auto-analyze
-      runAnalysis(newFiles, userKeywords);
+      runAnalysis(newFiles, userKeywords, superstarKeyword);
     }
   };
 
-  const runAnalysis = async (files: File[], keywords: string) => {
+  const runAnalysis = async (files: File[], keywords: string, mainKeyword: string) => {
     setIsAnalyzing(true);
     try {
-      const result = await analyzeProduct(files, keywords);
+      const result = await analyzeProduct(files, keywords, mainKeyword);
       setAnalysis(result);
       setScenarios(result.suggestedScenes);
       if (result.thumbnailHeadline) setThumbHeadline(result.thumbnailHeadline);
@@ -98,7 +99,7 @@ const MockupGenerator: React.FC = () => {
 
   const handleRegenerateMetadata = () => {
     if (images.length > 0) {
-      runAnalysis(images, userKeywords);
+      runAnalysis(images, userKeywords, superstarKeyword);
     }
   };
 
@@ -424,14 +425,27 @@ const MockupGenerator: React.FC = () => {
           {/* Step 1: Photos */}
           <div className="space-y-2">
             <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">1. Product Photos</label>
-            <div className="mb-2">
-              <input
-                type="text"
-                value={userKeywords}
-                onChange={(e) => setUserKeywords(e.target.value)}
-                placeholder="SEO keywords (boho, handmade)..."
-                className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:ring-1 focus:ring-indigo-500 outline-none"
-              />
+            <div className="mb-2 space-y-2">
+              <div>
+                <label className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider mb-1 block">Superstar Keyword (Primary)</label>
+                <input
+                  type="text"
+                  value={superstarKeyword}
+                  onChange={(e) => setSuperstarKeyword(e.target.value)}
+                  placeholder="e.g. Personalized Gift"
+                  className="w-full text-xs px-3 py-2 border border-indigo-200 bg-indigo-50/50 rounded-lg focus:ring-1 focus:ring-indigo-500 outline-none"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 block">Other Keywords</label>
+                <input
+                  type="text"
+                  value={userKeywords}
+                  onChange={(e) => setUserKeywords(e.target.value)}
+                  placeholder="SEO keywords (boho, handmade)..."
+                  className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:ring-1 focus:ring-indigo-500 outline-none"
+                />
+              </div>
             </div>
             <div className="relative border-2 border-dashed border-slate-300 rounded-lg p-4 hover:bg-slate-50 transition text-center cursor-pointer bg-slate-50/50">
               <input
