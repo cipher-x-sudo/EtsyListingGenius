@@ -44,8 +44,11 @@ export const analyzeProduct = async (imageFiles: File[], userKeywords?: string, 
     
     2. 'tags': Array of 13 strings.
        - Rules: Mix User's Specific Keywords with high-traffic AI suggestions.
-       - Max 18 chars per tag. 
-       - Varied vocabulary (no repetition of root words).
+       - LONG-TAIL: Tags MUST be multi-word phrases (2-3 words). Single words are wasted space.
+       - TITLE MATCH: Ensure the main keywords from your generated 'title' are included in these tags.
+       - NO REPEATED WORDS: Do NOT use the same word in multiple tags (e.g., if "wall art" is used, do NOT use "art print").
+       - Max 18 chars per tag (Strict).
+       - QUALITY: Zero typos.
     
     3. 'description': A compelling, professional listing description.
        - SEO REQUIREMENT (CRITICAL): The "SUPERSTAR KEYWORD" provided above is the ABSOLUTE PRIORITY.
